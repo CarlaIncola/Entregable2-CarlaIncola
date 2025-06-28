@@ -293,6 +293,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             });
         }
         
+        // Save to localStorage immediately
         guardarDatosBiblioteca();
         
         mostrarMensaje(`¡Gracias por tu calificación, ${nombre}!`);
@@ -346,7 +347,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             ultimaActualizacion: new Date().toISOString()
         };
         localStorage.setItem(CLAVE_ALMACENAMIENTO, JSON.stringify(datosAGuardar));
-        console.log("Datos guardados en LocalStorage");
+        console.log("Datos guardados en LocalStorage:", datosAGuardar);
     }
 
     function cargarDatosBiblioteca() {
@@ -355,18 +356,21 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             try {
                 const datosParseados = JSON.parse(datosGuardados);
                 
-                datosParseados.libros.forEach(libroGuardado => {
-                    const libroExistente = libros.find(l => l.titulo === libroGuardado.titulo && l.autor === libroGuardado.autor);
-                    if (libroExistente) {
-
+                // Merge ratings and comments while preserving original book data
+                libros.forEach(libro => {
+                    const libroGuardado = datosParseados.libros.find(
+                        l => l.titulo === libro.titulo && l.autor === libro.autor
+                    );
+                    
+                    if (libroGuardado) {
+                        // Merge ratings if they exist
                         if (libroGuardado.calificaciones) {
-                            libroExistente.calificaciones = libroGuardado.calificaciones;
+                            libro.calificaciones = libroGuardado.calificaciones;
                         }
+                        // Merge comments if they exist
                         if (libroGuardado.comentarios) {
-                            libroExistente.comentarios = libroGuardado.comentarios;
+                            libro.comentarios = libroGuardado.comentarios;
                         }
-                    } else {
-                        libros.push(libroGuardado);
                     }
                 });
                 
@@ -755,6 +759,19 @@ const libros = [
         comentarios: []
     }
 
+]
+
+// INICIALIZACIÓN DEL CÓDIGO
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDatosBiblioteca();
+    
+    // Check if we have existing data
+    const datosGuardados = localStorage.getItem(CLAVE_ALMACENAMIENTO);
+    if (!datosGuardados) {
+        // If no data exists, initialize with our default books
+        guardarDatosBiblioteca();
+    }
+});
 ]
 
 // INICIALIZACIÓN DEL CÓDIGO
