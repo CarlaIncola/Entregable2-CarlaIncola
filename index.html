@@ -1,80 +1,90 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Librería personal</title>
-    <link rel="stylesheet" href="./style.css">
-</head>
-<body>
-    <!-- APP -->
-    <div id="contenedor-app">
-        <header>
-            <h1 class="titulo-proyecto">Librería de Carla</h1>
-        </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Librería personal</title>
+        <link rel="stylesheet" href="./style.css">
+    </head>
+    <body>
+        <!-- APP -->
+        <div id="contenedor-app">
+            <header>
+                <h1 class="titulo-proyecto">Librería de Carla</h1>
+            </header>
 
-        <!-- SECCIÓN INICIAR SESIÓN -->
-        <div id="contenedor-login" class="activo">
-            <img src="assets/6721774.jpg" width="300" height="auto" alt="">
-            <h2>Ingresa tu nombre</h2>
-            <input type="text" id="entrada-nombre" placeholder="Tu nombre (Sin números ni caracteres especiales)">
-            <button id="boton-login">Ingresar</button>
-            <p id="error-login" class="mensaje-error"></p>
-        </div>
+            <!-- SECCIÓN INICIAR SESIÓN -->
+            <div id="contenedor-login" class="activo">
+                <img src="assets/6721774.jpg" width="300" height="auto" alt="">
+                <h2>Ingresa tu nombre</h2>
+                <input type="text" id="entrada-nombre" placeholder="Tu nombre (Sin números ni caracteres especiales)">
+                <button id="boton-login">Ingresar</button>
+                <p id="error-login" class="mensaje-error"></p>
+            </div>
 
-        <!-- BIBLIOTECA -->
-        <div id="aplicacion-principal" class="oculto">
-            <h2 id="mensaje-bienvenida"></h2>
-            
-            <div id="contenedor-menu">
-                <h3>¿Qué te gustaría leer hoy?</h3>
-                <div class="opciones-menu">
-                    <button class="boton-menu" data-genero="romance">Romance</button>
-                    <button class="boton-menu" data-genero="terror">Terror</button>
-                    <button class="boton-menu" data-genero="aventura">Aventura</button>
-                    <button class="boton-menu" data-genero="coyuntura">Coyuntura</button>
-                    <button class="boton-menu" data-genero="policiales">Policiales</button>
-                    <button class="boton-menu" data-genero="otros">Otros</button>
-                    <button class="boton-menu" data-genero="aleatorio">Aleatorio</button>
-                    <button class="boton-menu" data-genero="todos">Todos</button>
-                    <button id="boton-logout">Salir</button>
+            <!-- BIBLIOTECA -->
+            <div id="aplicacion-principal" class="oculto">
+                <h2 id="mensaje-bienvenida"></h2>
+                
+                <div id="contenedor-menu">
+                    <h3>¿Qué te gustaría leer hoy?</h3>
+                    
+                    <!-- MENU DE FILTROS -->
+                    <div class="opciones-menu">
+                        <button class="boton-menu" data-genero="romance">Romance</button>
+                        <button class="boton-menu" data-genero="terror">Terror</button>
+                        <button class="boton-menu" data-genero="aventura">Aventura</button>
+                        <button class="boton-menu" data-genero="coyuntura">Coyuntura</button>
+                        <button class="boton-menu" data-genero="policiales">Policiales</button>
+                        <button class="boton-menu" data-genero="otros">Otros</button>
+                        <button class="boton-menu" data-genero="aleatorio">Aleatorio</button>
+                        <button class="boton-menu" data-genero="todos">Todos</button>
+                        <button id="boton-logout">Salir</button>
+                    </div>
+                </div>
+
+                <!-- BIBLIOTECA FILTRADA SEGÚN GÉNERO -->
+                <div id="contenedor-libros" class="oculto">
+                    <h3 id="titulo-genero"></h3>
+                    <div id="lista-libros"></div>
+                    <button id="volver-menu">Volver al menú</button>
+                </div>
+
+                <!-- FORMULARIO PARA CALIFICAR LIBROS -->
+                <div id="contenedor-calificacion" class="oculto">
+                    <h3>Calificar libro</h3>
+                    <p id="libro-a-calificar"></p>
+                    <div class="estrellas-calificacion">
+                        <span class="estrella" data-calificacion="1">★</span>
+                        <span class="estrella" data-calificacion="2">★</span>
+                        <span class="estrella" data-calificacion="3">★</span>
+                        <span class="estrella" data-calificacion="4">★</span>
+                        <span class="estrella" data-calificacion="5">★</span>
+                    </div>
+                    <textarea id="entrada-comentario" placeholder="Tu opinión (opcional)"></textarea>
+                    <button id="enviar-calificacion">Enviar calificación</button>
+                    <button id="cancelar-calificacion">Cancelar</button>
+                </div>
+
+                <!-- RECIBIR RECOMENDACIÓN ALEATORIA -->
+                <div id="contenedor-libro-aleatorio" class="oculto">
+                    <h3>Recomendación aleatoria</h3>
+                    <div id="info-libro-aleatorio"></div>
+                    <button id="calificar-libro-aleatorio">Calificar este libro</button>
+                    <button id="volver-aleatorio">Volver al menú</button>
                 </div>
             </div>
 
-            <div id="contenedor-libros" class="oculto">
-                <h3 id="titulo-genero"></h3>
-                <div id="lista-libros"></div>
-                <button id="volver-menu">Volver al menú</button>
-            </div>
-
-            <div id="contenedor-calificacion" class="oculto">
-                <h3>Calificar libro</h3>
-                <p id="libro-a-calificar"></p>
-                <div class="estrellas-calificacion">
-                    <span class="estrella" data-calificacion="1">★</span>
-                    <span class="estrella" data-calificacion="2">★</span>
-                    <span class="estrella" data-calificacion="3">★</span>
-                    <span class="estrella" data-calificacion="4">★</span>
-                    <span class="estrella" data-calificacion="5">★</span>
-                </div>
-                <textarea id="entrada-comentario" placeholder="Tu opinión (opcional)"></textarea>
-                <button id="enviar-calificacion">Enviar calificación</button>
-                <button id="cancelar-calificacion">Cancelar</button>
-            </div>
-
-            <div id="contenedor-libro-aleatorio" class="oculto">
-                <h3>Recomendación aleatoria</h3>
-                <div id="info-libro-aleatorio"></div>
-                <button id="calificar-libro-aleatorio">Calificar este libro</button>
-                <button id="volver-aleatorio">Volver al menú</button>
+            <!-- MENSAJES DE LA APP -->
+            <div id="contenedor-mensaje" class="oculto">
+                <p id="texto-mensaje"></p>
+                <button id="cerrar-mensaje">Aceptar</button>
             </div>
         </div>
 
-        <div id="contenedor-mensaje" class="oculto">
-            <p id="texto-mensaje"></p>
-            <button id="cerrar-mensaje">Aceptar</button>
-        </div>
-    </div>
+        <script src="./script.js"></script>
+    </body>
+</html>
 
     <script src="./script.js"></script>
 </body>
