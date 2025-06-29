@@ -1,3 +1,6 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js";
+
 // Elementos DOM
 const contenedorLogin = document.getElementById('contenedor-login');
 const aplicacionPrincipal = document.getElementById('aplicacion-principal');
@@ -31,21 +34,32 @@ let generoActual = null;
 let calificacionActual = 0;
 const estrellas = document.querySelectorAll('.estrella');
 
-  // Your web app's Firebase configuration
-  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-  const firebaseConfig = {
-    apiKey: "AIzaSyAI-dLxOCAAG2m6p-j8iT9ax6L2-kDfU4o",
-    authDomain: "carla-library.firebaseapp.com",
-    projectId: "carla-library",
-    storageBucket: "carla-library.firebasestorage.app",
-    messagingSenderId: "296627829421",
-    appId: "1:296627829421:web:0d67b5192ff9562f8a2424",
-    measurementId: "G-20R8R9GMCL"
-  };
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+    apiKey: "AIzaSyAI-dLxOCAAG2m6p-j8iT9ax6L2-kDfU4o",
+    authDomain: "carla-library.firebaseapp.com",
+    databaseURL: "https://carla-library-default-rtdb.firebaseio.com", // THIS LINE IS CRUCIAL
+    projectId: "carla-library",
+    storageBucket: "carla-library.appspot.com",
+    messagingSenderId: "296627829421",
+    appId: "1:296627829421:web:0d67b5192ff9562f8a2424",
+    measurementId: "G-20R8R9GMCL"
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const analytics = getAnalytics(app);
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+document.addEventListener('DOMContentLoaded', () => {
+    cargarDatosBiblioteca();
+    
+    // Test Firebase connection
+    set(ref(database, 'connectionTest'), {
+        timestamp: new Date().toISOString()
+    }).then(() => console.log("Conectado a Firebase"))
+    .catch(error => console.error("Error de conexión:", error));
+});
 
 // EVENT LISTENERS
 botonLogin.addEventListener('click', manejarLogin);
@@ -309,7 +323,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             });
         }
         
-        // Save to localStorage immediately
+        // Save to Firebase
         guardarDatosBiblioteca();
         
         mostrarMensaje(`¡Gracias por tu calificación, ${nombre}!`);
@@ -358,46 +372,42 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
     const CLAVE_ALMACENAMIENTO = "datosBibliotecaLibros";
 
     function guardarDatosBiblioteca() {
-        const datosAGuardar = {
-            libros: libros,
-            ultimaActualizacion: new Date().toISOString()
-        };
-        localStorage.setItem(CLAVE_ALMACENAMIENTO, JSON.stringify(datosAGuardar));
-        console.log("Datos guardados en LocalStorage:", datosAGuardar);
+        try {
+            set(ref(database, 'libros'), libros);
+            console.log("Datos guardados en Firebase");
+        } catch (error) {
+            console.error("Error al guardar en Firebase:", error);
+        }
     }
 
     function cargarDatosBiblioteca() {
-        const datosGuardados = localStorage.getItem(CLAVE_ALMACENAMIENTO);
-        if (datosGuardados) {
-            try {
-                const datosParseados = JSON.parse(datosGuardados);
-                
-                // Merge ratings and comments while preserving original book data
+        const librosRef = ref(database, 'libros');
+        onValue(librosRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                // Merge Firebase data with local books
                 libros.forEach(libro => {
-                    const libroGuardado = datosParseados.libros.find(
+                    const libroGuardado = data.find(
                         l => l.titulo === libro.titulo && l.autor === libro.autor
                     );
                     
                     if (libroGuardado) {
-                        // Merge ratings if they exist
-                        if (libroGuardado.calificaciones) {
-                            libro.calificaciones = libroGuardado.calificaciones;
-                        }
-                        // Merge comments if they exist
-                        if (libroGuardado.comentarios) {
-                            libro.comentarios = libroGuardado.comentarios;
-                        }
+                        libro.calificaciones = libroGuardado.calificaciones || [];
+                        libro.comentarios = libroGuardado.comentarios || [];
                     }
                 });
+                console.log("Datos cargados desde Firebase");
                 
-                console.log("Datos cargados desde LocalStorage");
-                return true;
-            } catch (e) {
-                console.error("Error al analizar datos guardados", e);
-                return false;
+                // Refresh the UI
+                if (generoActual === 'aleatorio') {
+                    mostrarLibroAleatorio();
+                } else if (generoActual) {
+                    mostrarLibrosPorGenero(generoActual);
+                }
             }
-        }
-        return false;
+        }, (error) => {
+            console.error("Error al cargar de Firebase:", error);
+        });
     }
 
 // ARRAY DE OBJETOS: LIBROS
@@ -787,8 +797,4 @@ document.addEventListener('DOMContentLoaded', () => {
         // If no data exists, initialize with our default books
         guardarDatosBiblioteca();
     }
-});
-// INICIALIZACIÓN DEL CÓDIGO
-document.addEventListener('DOMContentLoaded', () => {
-    cargarDatosBiblioteca();
 });
