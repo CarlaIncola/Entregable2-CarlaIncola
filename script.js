@@ -31,6 +31,22 @@ let generoActual = null;
 let calificacionActual = 0;
 const estrellas = document.querySelectorAll('.estrella');
 
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  const firebaseConfig = {
+    apiKey: "AIzaSyAI-dLxOCAAG2m6p-j8iT9ax6L2-kDfU4o",
+    authDomain: "carla-library.firebaseapp.com",
+    projectId: "carla-library",
+    storageBucket: "carla-library.firebasestorage.app",
+    messagingSenderId: "296627829421",
+    appId: "1:296627829421:web:0d67b5192ff9562f8a2424",
+    measurementId: "G-20R8R9GMCL"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+
 // EVENT LISTENERS
 botonLogin.addEventListener('click', manejarLogin);
 
@@ -772,8 +788,6 @@ document.addEventListener('DOMContentLoaded', () => {
         guardarDatosBiblioteca();
     }
 });
-]
-
 // INICIALIZACIÓN DEL CÓDIGO
 document.addEventListener('DOMContentLoaded', () => {
     cargarDatosBiblioteca();
