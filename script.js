@@ -83,7 +83,6 @@ volverAleatorio.addEventListener('click', () => {
 cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('oculto'));
 
 // FUNCIONES:
-
     // FUNCIÓN INICIAR SESIÓN
     function manejarLogin() {
         const nombreIngresado = entradaNombre.value.trim();
@@ -98,16 +97,16 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             mostrarError("Nombre inválido. Solo letras por favor.");
             return;
         }
-        
+        // DEVUELVO EL NOMBRE INGRESADO CON LA PRIMER LETRA MAYÚSCULA
         nombre = nombreIngresado.charAt(0).toUpperCase() + nombreIngresado.slice(1).toLowerCase();
         conectado = true;
         
-        // UI Update
+        // UI
         mensajeBienvenida.textContent = `¡Hola ${nombre}! 👋​`;
         contenedorLogin.classList.add('oculto');
         aplicacionPrincipal.classList.remove('oculto');
         
-        // Show menu and all books immediately
+        // LA APP EMPIEZA MOSTRANDO LOS LIBROS DE TODOS LOS GÉNEROS
         document.getElementById('contenedor-menu').classList.remove('oculto');
         mostrarLibrosPorGenero('todos');
         
@@ -126,7 +125,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
         console.log(`${nombre} abandonó la app.`);
     }
 
-    // FUNCIÓN MOSTRAR ERROR
+    // FUNCIÓN MOSTRAR ERROR DE DATOS AL INICIAR SESIÓN
     function mostrarError(mensaje) {
         errorLogin.textContent = mensaje;
         errorLogin.classList.add('activo');
@@ -157,7 +156,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             mostrarMensaje(`No hay libros disponibles en el género ${mapaGeneros[genero] || genero}`);
             return;
         }
-        
+        // MUESTRO SOLO LOS LIBROS FILTRADOS
         tituloGenero.textContent = genero === 'todos' 
         ? 'Todos los libros disponibles' 
         : `Libros de ${mapaGeneros[genero] || genero}`;
@@ -171,7 +170,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             const imagenHTML = libro.imagen 
                 ? `<div class="contenedor-imagen-libro">
                     <img src="${libro.imagen}" alt="${libro.titulo}" class="imagen-libro" onerror="this.src='libro-default.jpg'">
-                </div>`
+                    </div>`
                 : '<div class="marcador-imagen-libro">No hay imagen disponible.</div>';
             
                 elementoLibro.innerHTML = `
@@ -199,7 +198,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             `;
             listaLibros.appendChild(elementoLibro);
         });
-        
+        // BOTÓN PARA CALIFICAR LIBRO
         document.querySelectorAll('.boton-calificar-libro').forEach(boton => {
             boton.addEventListener('click', (e) => {
                 const indice = e.target.dataset.indice;
@@ -217,10 +216,10 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
         libroActual = libroAleatorio;
         generoActual = 'aleatorio';
         
-        // Clear previous content
+        // LIMPIA EL CONTENIDO ANTERIOR
         infoLibroAleatorio.innerHTML = '';
         
-        // Build book display
+        // INFORMACIÓN E IMAGEN DE LIBRO ALEATORIO
         const imagenHTML = libroAleatorio.imagen 
             ? `<div class="imagen-libro-aleatorio">
                 <img src="${libroAleatorio.imagen}" alt="${libroAleatorio.titulo}">
@@ -239,7 +238,7 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             </div>
         `;
         
-        // Show only random book container
+        // OCULTO LOS DEMAS LIBROS
         contenedorLibros.classList.add('oculto');
         contenedorLibroAleatorio.classList.remove('oculto');
     }
@@ -293,7 +292,6 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             });
         }
         
-        // Save to localStorage immediately
         guardarDatosBiblioteca();
         
         mostrarMensaje(`¡Gracias por tu calificación, ${nombre}!`);
@@ -305,15 +303,16 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
         }
     }
 
+    // FUNCIÓN QUE MANEJA LAS VISTAS DE LA APP
     function alternarVista(vista) {
-        // Hide all views except menu
+        // ESCONDE TODO EXCEPTO EL MENU
         document.querySelectorAll('#aplicacion-principal > div').forEach(div => {
             if (div.id !== 'contenedor-menu') {
                 div.classList.add('oculto');
             }
         });
         
-        // Show selected view
+        // MUESTRA LA VISTA SELECCIONADA
         if (vista === 'menu') {
             document.getElementById('contenedor-menu').classList.remove('oculto');
         } else if (vista === 'libros') {
@@ -356,18 +355,18 @@ cerrarMensaje.addEventListener('click', () => contenedorMensaje.classList.add('o
             try {
                 const datosParseados = JSON.parse(datosGuardados);
                 
-                // Merge ratings and comments while preserving original book data
+                // GUARDA CLASIFICACIONES Y COMENTARIOS
                 libros.forEach(libro => {
                     const libroGuardado = datosParseados.libros.find(
                         l => l.titulo === libro.titulo && l.autor === libro.autor
                     );
                     
                     if (libroGuardado) {
-                        // Merge ratings if they exist
+                        // RATINGS CARGADOS
                         if (libroGuardado.calificaciones) {
                             libro.calificaciones = libroGuardado.calificaciones;
                         }
-                        // Merge comments if they exist
+                        // COMENTARIOS CARGADOS
                         if (libroGuardado.comentarios) {
                             libro.comentarios = libroGuardado.comentarios;
                         }
@@ -765,10 +764,10 @@ const libros = [
 document.addEventListener('DOMContentLoaded', () => {
     cargarDatosBiblioteca();
     
-    // Check if we have existing data
+    // CHEUQEA SI HAY DATOS EXISTENTES
     const datosGuardados = localStorage.getItem(CLAVE_ALMACENAMIENTO);
     if (!datosGuardados) {
-        // If no data exists, initialize with our default books
+        // SI NO LA HAY, INICIALIZA CON LOS LIBROS DE LA BIBLIOTECA
         guardarDatosBiblioteca();
     }
 });
